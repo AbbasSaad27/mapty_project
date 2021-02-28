@@ -197,6 +197,7 @@ a:visited {
   flex: 1;
   height: 100%;
   background-color: var(--color-light--1);
+  position: relative;
 }
 
 /* Popup width is defined in JS using options */
@@ -266,7 +267,7 @@ a:visited {
   border-radius: 2rem;
   transform: translate(-30%, -150%) scale(0);
   opacity: 0;
-  z-index: 2000;
+  z-index: 3000;
   transition: all 0.5s ease-in-out;
 }
 .popup-scaler {
@@ -283,6 +284,14 @@ a:visited {
   font-family: inherit;
   padding: 1rem;
   cursor: pointer;
+  border-radius: 1rem;
+  transition: all 0.3s;
+}
+.error-closer:focus {
+  outline: none;
+}
+.error-closer:hover {
+  background-color: #00db75;
 }
 .overlay {
   height: 100%;
@@ -292,8 +301,52 @@ a:visited {
   left: 0;
   background-color: rgba(83, 83, 83, 0.5);
   filter: blur(50px);
-  z-index: 1999;
+  z-index: 2999;
 }
 .overlay-hider {
   display: none;
+}
+.show-all-btn {
+  font-size: 2.5rem;
+  color: #2d3439;
+  z-index: 2998;
+  opacity: 1;
+  position: absolute;
+  top: 1rem;
+  right: 50%;
+  transform: translate(-50%);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.show-all-btn:hover {
+  color: #00c46a;
+}
+.marker-type {
+  width: 15rem;
+  background-color: transparent;
+  position: absolute;
+  top: 1rem;
+  right: 2rem;
+  z-index: 2999;
+}
+.marker__input {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  background-color: #2d3439;
+  color: white;
+  font-family: inherit;
+  font-size: 1.2rem;
+}
+.marker__input:focus,
+.marker__input:hover {
+  outline: none;
+}
+.marker__input option {
+  padding: 0.5rem;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+.marker-option:hover {
+  color: #2d3439;
+  background-color: #00db75;
 }

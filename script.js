@@ -15,6 +15,8 @@ const allDeleteBtn = document.querySelector(`.delete-all`);
 const errorPopup = document.querySelector(`.error-popup`);
 const overlay = document.querySelector(`.overlay`);
 const popupCloser = document.querySelector(`.error-closer`);
+const mapPanner = document.querySelector(`.show-all-btn`);
+const markerInput = document.querySelector(`.marker__input`);
 
 class Workout {
     date = new Date();
@@ -82,6 +84,7 @@ class App {
     #mapEvent;
     #workouts = [];
     #markers = [];
+    #markerType = `default`;
 
     constructor(){
         // get user's position
@@ -98,6 +101,9 @@ class App {
         sorter.addEventListener(`click`, this._sortWorkout.bind(this));
         allDeleteBtn.addEventListener(`click`, this._deleteALlWorkout.bind(this))
         popupCloser.addEventListener(`click`, this._togglePopup);
+        mapPanner.addEventListener(`click`, this._panMap.bind(this));
+        markerInput.addEventListener(`change`, this._selectMarker.bind(this))
+        markerInput.addEventListener(`click`, (e)=>e.stopPropagation());
     }
 
     _getPosition() {
@@ -220,7 +226,19 @@ class App {
     }
 
     _renderWorkoutMarker(workout) {
-        const marker = L.marker(workout.coords)
+        let marker;
+        if(this.#markerType === `default`){
+            marker = L.marker(workout.coords)
+        } else if (this.#markerType === `sphere`) {
+            marker = L.circle((workout.coords), {
+                color: `#00c46a`,
+                fillColor: `#00c46a`,
+                fillOpacity: 0.5,
+                radius: 300,
+            })
+        } else if(this.#markerType === `line`) {
+            marker = L.polygon([workout.coords, [workout.coords[0], workout.coords[1] - 0.004]]);
+        }
         this.#markers.push(marker);
         marker
         .addTo(this.#map)
@@ -292,12 +310,19 @@ class App {
         const workout = this.#workouts.find(work => work.id === workoutEl.dataset.id);
 
         if(e.target.classList.contains(`fas`)) {
+            // setting to display none when clicked on workout
             workoutEl.style.display = `none`
+            // finding that workout from the workouts array
             const workoutIndex = this.#workouts.findIndex(work => work.id === workoutEl.dataset.id);
+            // removing that workout from array
             this.#workouts.splice(workoutIndex, 1);
+            // removing the marker related to current workout
             this.#map.removeLayer(this.#markers[workoutIndex]);
+            // removing the marker from the marker array
             this.#markers.splice(workoutIndex, 1);
+            // setting the local storage again
             this._setLocalStorage();
+            // terminating the method
             return;
         }
 
@@ -357,6 +382,22 @@ class App {
     _togglePopup(){
         errorPopup.classList.toggle(`popup-scaler`);
         overlay.classList.toggle(`overlay-hider`);
+    }
+    _panMap(e) {
+        e.stopPropagation();
+        if(!this.#workouts[0]){
+            return;
+        }
+        const coordsArr = []
+        this.#workouts.forEach(work => coordsArr.push(work.coords));
+        this.#map.fitBounds(coordsArr, {
+            padding: [50, 50],
+            maxZoom: 12,
+        });
+    }
+    _selectMarker(e) {
+        e.stopPropagation();
+        this.#markerType = markerInput.value;
     }
 }
 
