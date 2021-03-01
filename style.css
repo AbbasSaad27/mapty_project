@@ -343,10 +343,5 @@ a:visited {
 }
 .marker__input option {
   padding: 0.5rem;
-  transition: all 0.3s;
   font-family: inherit;
-}
-.marker-option:hover {
-  color: #2d3439;
-  background-color: #00db75;
 }

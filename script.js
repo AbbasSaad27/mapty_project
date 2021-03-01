@@ -227,17 +227,29 @@ class App {
 
     _renderWorkoutMarker(workout) {
         let marker;
-        if(this.#markerType === `default`){
-            marker = L.marker(workout.coords)
-        } else if (this.#markerType === `sphere`) {
-            marker = L.circle((workout.coords), {
-                color: `#00c46a`,
-                fillColor: `#00c46a`,
-                fillOpacity: 0.5,
-                radius: 300,
-            })
-        } else if(this.#markerType === `line`) {
-            marker = L.polygon([workout.coords, [workout.coords[0], workout.coords[1] - 0.004]]);
+        // helper function for checking what marker is selected
+        const checkMarkerType = markerType => {
+            if(markerType === `default`){
+                marker = L.marker(workout.coords);
+            } else if (markerType === `sphere`) {
+                marker = L.circle((workout.coords), {
+                    color: `#00c46a`,
+                    fillColor: `#00c46a`,
+                    fillOpacity: 0.5,
+                    radius: 300,
+                })
+            } else if(markerType === `line`) {
+                marker = L.polygon([workout.coords, [workout.coords[0], workout.coords[1] - 0.004]]);
+            }
+        }
+        // if current workout has its own marker style
+        if(workout.marker) {
+            checkMarkerType(workout.marker);
+        }
+        // if current workout doesn't has its own marker style
+        if(!workout.marker){
+            checkMarkerType(this.#markerType);
+            workout.marker = this.#markerType;
         }
         this.#markers.push(marker);
         marker
